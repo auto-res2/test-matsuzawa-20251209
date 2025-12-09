@@ -1,0 +1,54 @@
+wandb:
+  entity: test
+  project: test
+  mode: online
+
+run:
+  run_id: default-run
+
+# Default dataset/model/training placeholders
+model:
+  name: CLIP
+  id: openai/clip-vit-base-patch32
+
+components:
+  proposer:
+    name: gpt-3.5-turbo
+    id: gpt3.5-turbo
+    mode: production
+
+dataset:
+  name: caltech101
+  id: caltech101
+  preprocessing:
+    image_size: 224
+    center_crop: true
+    normalize: true
+
+training:
+  nrestart: 1
+  iterations_per_restart: 1
+  proposals_per_iteration: 2
+  top_k_pool: 5
+  validation_budget_per_restart: 1
+
+search_config:
+  minhash:
+    ngram_n: 3
+    k_sig: 64
+  bootstrap:
+    B: 20
+    sample_frac: 0.7
+  length_normalization:
+    max_len_tokens: 40
+    default_lambda_len: 0.05
+  semantic_penalty:
+    default_mu_sim: 0.3
+  uncertainty_penalty:
+    default_gamma_unc: 0.5
+  adaptive_updater:
+    eta: 0.2
+    update_period_iterations: 3
+
+optuna:
+  n_trials: 0

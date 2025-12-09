@@ -1,0 +1,47 @@
+run_id: comparative-1-clip-rn50-caltech101
+method: Raw hill_climb_with_llm
+method_type: comparative-1
+version: v1
+summary: "Baseline: original conversational hill-climb that ranks proposals solely by raw training-fold accuracy (no length/semantic/uncertainty regularization). Uses CLIP RN50 as evaluator and gpt-3.5-turbo proposer by default. Runner-scale defaults applied."
+model:
+  name: "CLIP RN50"
+  id: "clip-rn50"
+  role: vlm
+components:
+  proposer:
+    name: "gpt-3.5-turbo"
+    id: "gpt3.5-turbo"
+    role: llm_proposer
+dataset:
+  name: caltech101
+  id: caltech101
+  max_sampled_classes: 30
+  splits:
+    n_folds: 3
+    shots: [1, 4]
+    runner_scale: true
+training:
+  nrestart: 5
+  iterations_per_restart: 5
+  proposals_per_iteration: 50
+  top_k_pool: 10
+  validation_budget_per_restart: 3
+  learning_rate: 0.001
+  batch_size: 16
+  epochs: 1
+  optimizer: adam
+search_config:
+  method: raw_accuracy_sort
+  description: "Sort and select proposals by raw training-fold accuracy only. No MinHash, no bootstrap uncertainty, no length penalty."
+  evaluation:
+    evaluate_on_train_fold: true
+    evaluate_on_validation_budget: 0
+  pool_and_selection:
+    top_k_for_replacement: 10
+    selection_sort_key: raw_acc
+optuna:
+  n_trials: 0
+  search_spaces: []
+evaluation:
+  primary_metric: "held-out top-1 accuracy"
+notes: "Baseline config used to measure improvements from RUA-BBPS. Keep same proposal budget for fair comparison."

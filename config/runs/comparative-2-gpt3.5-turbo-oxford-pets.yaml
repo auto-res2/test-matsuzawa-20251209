@@ -1,0 +1,51 @@
+run_id: comparative-2-gpt3.5-turbo-oxford-pets
+method: RBBPS (static lexical-Jaccard + length penalty)
+method_type: comparative-2
+version: v1
+summary: "Static regularization baseline tracking proposer variation: gpt-3.5-turbo labeled as primary model; evaluation uses CLIP RN50. Static lexical-Jaccard + length penalty. Runner-scale defaults applied."
+model:
+  name: "gpt-3.5-turbo"
+  id: "gpt3.5-turbo"
+  role: llm_proposer
+components:
+  evaluator:
+    name: "CLIP RN50"
+    id: "clip-rn50"
+    role: vlm
+dataset:
+  name: "Oxford-IIIT Pet"
+  id: oxford-pets
+  max_sampled_classes: 30
+  splits:
+    n_folds: 3
+    shots: [1, 4]
+    runner_scale: true
+training:
+  nrestart: 5
+  iterations_per_restart: 5
+  proposals_per_iteration: 50
+  top_k_pool: 10
+  validation_budget_per_restart: 3
+  learning_rate: 0.001
+  batch_size: 16
+  epochs: 1
+  optimizer: adam
+search_config:
+  method: RBBPS_static
+  adjusted_score: "acc_train - lambda_len * LenNorm(prompt) - mu_sim * LexicalJaccardMax(prompt,TopKPool) - gamma_unc * BootstrapStd(prompt)"
+  lexical_similarity:
+    metric: token_set_jaccard
+    ngram_n: 3
+  length_normalization:
+    max_len_tokens: 40
+    lambda_len: 0.05
+  semantic_penalty:
+    mu_sim: 0.30
+  uncertainty_penalty:
+    gamma_unc: 0.00
+optuna:
+  n_trials: 0
+  search_spaces: []
+evaluation:
+  primary_metric: "held-out top-1 accuracy"
+notes: "Proposer-labeled static-regularization variant; coefficients fixed to conservative defaults."

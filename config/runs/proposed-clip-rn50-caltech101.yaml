@@ -1,0 +1,81 @@
+run_id: proposed-clip-rn50-caltech101
+method: RUA-BBPS
+method_type: proposed
+version: v1
+summary: "Regularized, Uncertainty-aware, Adaptive Black-Box Prompt Search (RUA-BBPS) using MinHash semantic novelty, bootstrap uncertainty, and an online multiplicative-weight adaptive updater. VLM=CLIP RN50 (evaluator), proposer=gpt-3.5-turbo by default. Runner-scale defaults applied."
+model:
+  name: "CLIP RN50"
+  id: "clip-rn50"
+  role: vlm
+  description: "Visual encoder used as local evaluator (top-1 accuracy on few-shot folds)."
+components:
+  proposer:
+    name: "gpt-3.5-turbo"
+    id: "gpt3.5-turbo"
+    role: llm_proposer
+    mode: production (default; can be swapped to local/mock proposer for offline runs)
+dataset:
+  name: caltech101
+  id: caltech101
+  max_sampled_classes: 30
+  splits:
+    n_folds: 3
+    shots: [1, 4]
+    runner_scale: true
+  preprocessing:
+    image_size: 224
+    center_crop: true
+    normalize: true
+training:
+  # Search / hill-climb specific hyperparameters (Runner-scale defaults)
+  nrestart: 5
+  iterations_per_restart: 5
+  proposals_per_iteration: 50
+  top_k_pool: 10
+  validation_budget_per_restart: 3
+  # Generic training-similar placeholders (kept for compatibility with training pipelines)
+  learning_rate: 0.001
+  batch_size: 16
+  epochs: 1
+  optimizer: adam
+search_config:
+  method: RUA-BBPS
+  adjusted_score: "acc_train - lambda_len * LenNorm(prompt) - mu_sim * MinHashSimMax(prompt,TopKPool) - gamma_unc * BootstrapStd(prompt)"
+  minhash:
+    ngram_n: 3
+    k_sig: 64
+    deterministic_hash: sha256
+  bootstrap:
+    B: 20
+    sample_frac: 0.7
+  length_normalization:
+    max_len_tokens: 40
+    default_lambda_len: 0.05
+  semantic_penalty:
+    default_mu_sim: 0.30
+  uncertainty_penalty:
+    default_gamma_unc: 0.50
+  adaptive_updater:
+    type: multiplicative_weights
+    eta: 0.2
+    grid: "small discrete grid of (lambda_len, mu_sim, gamma_unc) tuples (configured externally)"
+    validation_budget_V_eval: 3
+    update_period_iterations: 3
+  pool_and_selection:
+    top_k_for_similarity: 15
+    selection_sort_key: adj_score
+  cost_saving_defaults:
+    prefer_local_mock_proposer: false
+    limit_validation_calls_per_restart: 3
+evaluation:
+  primary_metric: "held-out top-1 accuracy"
+  secondary_metrics:
+    - average_prompt_length
+    - semantic_diversity_min_hash
+    - bootstrap_mean_std
+    - total_llm_api_calls
+    - std_across_restarts
+optuna:
+  n_trials: 0
+  search_spaces: []
+notes: "Runner-scale config—use local mock proposer and CLIP local inference for fully offline experiments. Use V_eval budget to update adaptive coefficients."

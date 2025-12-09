@@ -1,0 +1,51 @@
+run_id: comparative-2-clip-rn50-caltech101
+method: RBBPS (static lexical-Jaccard + length penalty)
+method_type: comparative-2
+version: v1
+summary: "Static regularization baseline: penalizes prompt length and lexical redundancy using token-set Jaccard (max over TopK pool). Coefficients are fixed (small manual sweep defaults). VLM=CLIP RN50 evaluator, proposer=gpt-3.5-turbo by default. Runner-scale defaults applied."
+model:
+  name: "CLIP RN50"
+  id: "clip-rn50"
+  role: vlm
+components:
+  proposer:
+    name: "gpt-3.5-turbo"
+    id: "gpt3.5-turbo"
+    role: llm_proposer
+dataset:
+  name: caltech101
+  id: caltech101
+  max_sampled_classes: 30
+  splits:
+    n_folds: 3
+    shots: [1, 4]
+    runner_scale: true
+training:
+  nrestart: 5
+  iterations_per_restart: 5
+  proposals_per_iteration: 50
+  top_k_pool: 10
+  validation_budget_per_restart: 3
+  learning_rate: 0.001
+  batch_size: 16
+  epochs: 1
+  optimizer: adam
+search_config:
+  method: RBBPS_static
+  adjusted_score: "acc_train - lambda_len * LenNorm(prompt) - mu_sim * LexicalJaccardMax(prompt,TopKPool) - gamma_unc * BootstrapStd(prompt)"
+  lexical_similarity:
+    metric: token_set_jaccard
+    ngram_n: 3
+  length_normalization:
+    max_len_tokens: 40
+    lambda_len: 0.05
+  semantic_penalty:
+    mu_sim: 0.30
+  uncertainty_penalty:
+    gamma_unc: 0.00  # static variant: no bootstrap uncertainty penalty by default
+  notes: "Coefficients set via small manual sweep; ablation of RUA-BBPS to isolate benefits of MinHash and adaptivity."
+optuna:
+  n_trials: 0
+  search_spaces: []
+evaluation:
+  primary_metric: "held-out top-1 accuracy"
