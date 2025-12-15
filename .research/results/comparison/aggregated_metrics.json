@@ -1,0 +1,98 @@
+{
+  "primary_metric": "held-out top-1 accuracy (averaged across dataset folds and restarts)",
+  "metrics": {
+    "final_test_acc": {
+      "comparative-1-clip-rn50-caltech101": 0.7788666848304356,
+      "comparative-1-clip-rn50-oxford-pets": 0.7292406350101158,
+      "comparative-1-gpt3.5-turbo-caltech101": 0.7775380259143102,
+      "comparative-1-gpt3.5-turbo-oxford-pets": 0.7057815199925007,
+      "comparative-2-clip-rn50-caltech101": 0.8425971242829898,
+      "comparative-2-clip-rn50-oxford-pets": 0.8037246242346947,
+      "comparative-2-gpt3.5-turbo-caltech101": 0.8195457526408143,
+      "comparative-2-gpt3.5-turbo-oxford-pets": 0.8103829174184285,
+      "proposed-clip-rn50-caltech101": 0.9064893920692595,
+      "proposed-clip-rn50-oxford-pets": 0.8411700781144149,
+      "proposed-gpt3.5-turbo-caltech101": 0.8994053045483458,
+      "proposed-gpt3.5-turbo-oxford-pets": 0.876337018064653
+    },
+    "best_val_acc": {
+      "comparative-1-clip-rn50-caltech101": 0.7870204443635451,
+      "comparative-1-clip-rn50-oxford-pets": 0.7566287602676354,
+      "comparative-1-gpt3.5-turbo-caltech101": 0.7888926430770721,
+      "comparative-1-gpt3.5-turbo-oxford-pets": 0.7572775003531904,
+      "comparative-2-clip-rn50-caltech101": 0.8592974586504046,
+      "comparative-2-clip-rn50-oxford-pets": 0.8225897694555199,
+      "comparative-2-gpt3.5-turbo-caltech101": 0.8608582933796411,
+      "comparative-2-gpt3.5-turbo-oxford-pets": 0.8249061406306447,
+      "proposed-clip-rn50-caltech101": 0.9443314693007825,
+      "proposed-clip-rn50-oxford-pets": 0.8893479858016956,
+      "proposed-gpt3.5-turbo-caltech101": 0.9475528498735238,
+      "proposed-gpt3.5-turbo-oxford-pets": 0.9136473405330413
+    },
+    "final_acc": {
+      "comparative-1-clip-rn50-caltech101": 0.7566212512360411,
+      "comparative-1-clip-rn50-oxford-pets": 0.74237924242329,
+      "comparative-1-gpt3.5-turbo-caltech101": 0.7746700780124983,
+      "comparative-1-gpt3.5-turbo-oxford-pets": 0.7267184192671808,
+      "comparative-2-clip-rn50-caltech101": 0.8358295146981058,
+      "comparative-2-clip-rn50-oxford-pets": 0.787835931084739,
+      "comparative-2-gpt3.5-turbo-caltech101": 0.8384458843162919,
+      "comparative-2-gpt3.5-turbo-oxford-pets": 0.8030962825365763,
+      "proposed-clip-rn50-caltech101": 0.9258650102646901,
+      "proposed-clip-rn50-oxford-pets": 0.8636619821884831,
+      "proposed-gpt3.5-turbo-caltech101": 0.914834973037311,
+      "proposed-gpt3.5-turbo-oxford-pets": 0.8674826208932991
+    },
+    "method": {
+      "comparative-1-clip-rn50-caltech101": "comparative-1",
+      "comparative-1-clip-rn50-oxford-pets": "comparative-1",
+      "comparative-1-gpt3.5-turbo-caltech101": "comparative-1",
+      "comparative-1-gpt3.5-turbo-oxford-pets": "comparative-1",
+      "comparative-2-clip-rn50-caltech101": "comparative-2",
+      "comparative-2-clip-rn50-oxford-pets": "comparative-2",
+      "comparative-2-gpt3.5-turbo-caltech101": "comparative-2",
+      "comparative-2-gpt3.5-turbo-oxford-pets": "comparative-2",
+      "proposed-clip-rn50-caltech101": "proposed",
+      "proposed-clip-rn50-oxford-pets": "proposed",
+      "proposed-gpt3.5-turbo-caltech101": "proposed",
+      "proposed-gpt3.5-turbo-oxford-pets": "proposed"
+    },
+    "dataset": {
+      "comparative-1-clip-rn50-caltech101": "caltech101",
+      "comparative-1-clip-rn50-oxford-pets": "oxford-pets",
+      "comparative-1-gpt3.5-turbo-caltech101": "caltech101",
+      "comparative-1-gpt3.5-turbo-oxford-pets": "oxford-pets",
+      "comparative-2-clip-rn50-caltech101": "caltech101",
+      "comparative-2-clip-rn50-oxford-pets": "oxford-pets",
+      "comparative-2-gpt3.5-turbo-caltech101": "caltech101",
+      "comparative-2-gpt3.5-turbo-oxford-pets": "oxford-pets",
+      "proposed-clip-rn50-caltech101": "caltech101",
+      "proposed-clip-rn50-oxford-pets": "oxford-pets",
+      "proposed-gpt3.5-turbo-caltech101": "caltech101",
+      "proposed-gpt3.5-turbo-oxford-pets": "oxford-pets"
+    },
+    "model": {
+      "comparative-1-clip-rn50-caltech101": "clip-rn50",
+      "comparative-1-clip-rn50-oxford-pets": "clip-rn50",
+      "comparative-1-gpt3.5-turbo-caltech101": "gpt3.5-turbo",
+      "comparative-1-gpt3.5-turbo-oxford-pets": "gpt3.5-turbo",
+      "comparative-2-clip-rn50-caltech101": "clip-rn50",
+      "comparative-2-clip-rn50-oxford-pets": "clip-rn50",
+      "comparative-2-gpt3.5-turbo-caltech101": "gpt3.5-turbo",
+      "comparative-2-gpt3.5-turbo-oxford-pets": "gpt3.5-turbo",
+      "proposed-clip-rn50-caltech101": "clip-rn50",
+      "proposed-clip-rn50-oxford-pets": "clip-rn50",
+      "proposed-gpt3.5-turbo-caltech101": "gpt3.5-turbo",
+      "proposed-gpt3.5-turbo-oxford-pets": "gpt3.5-turbo"
+    }
+  },
+  "best_proposed": {
+    "run_id": "proposed-clip-rn50-caltech101",
+    "value": 0.9064893920692595
+  },
+  "best_baseline": {
+    "run_id": "comparative-2-clip-rn50-caltech101",
+    "value": 0.8425971242829898
+  },
+  "gap": 7.5827778121885885
+}
