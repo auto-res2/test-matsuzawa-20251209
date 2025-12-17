@@ -13,7 +13,7 @@ on:
       model_name:
         description: "Model to use"
         required: true
-        default: 'anthropic/claude-sonnet-4-5-20250929'
+        default: 'openai/gpt-5.1-codex'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
