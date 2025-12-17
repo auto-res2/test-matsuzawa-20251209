@@ -211,6 +211,7 @@ jobs:
           effort: "high"
           sandbox: "danger-full-access"
           allow-bots: true
+          safety-strategy: unsafe
 
       - name: Commit and push fix
         run: |
