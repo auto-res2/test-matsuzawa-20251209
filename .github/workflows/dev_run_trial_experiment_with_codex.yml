@@ -1,4 +1,4 @@
-name: "[Dev] Run Trial Experiment with Codex"
+name: "[Dev] Run Trial Experiment with AI agent"
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
       model_name:
         description: "Model to use"
         required: true
-        default: "openai/gpt-5.1-codex"
+        default: "openai/gpt-5.1"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -196,7 +196,7 @@ jobs:
           
           cat "$RESULTS_DIR/error_summary.txt"
 
-      - name: Run Codex
+      - name: Run AI agent
         timeout-minutes: 10
         continue-on-error: true
         uses: openai/codex-action@v1
@@ -210,6 +210,7 @@ jobs:
           model: ${{ github.event.inputs.model_name }}
           effort: "high"
           sandbox: "danger-full-access"
+          allow-bots: true
 
       - name: Commit and push fix
         run: |
@@ -226,7 +227,7 @@ jobs:
               sleep $((2**i))
             done
           else
-            echo "Claude Code made no changes to the code."
+            echo "AI agent made no changes to the code."
           fi
 
       - name: Trigger next iteration
