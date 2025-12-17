@@ -205,7 +205,7 @@ jobs:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
         with:
           openai-api-key: ${{ secrets.OPENROUTER_API_KEY }}
-          responses-api-endpoint: "https://openrouter.ai/api/v1"
+          responses-api-endpoint: "https://openrouter.ai/api/v1/responses"
           prompt: ${{ env.PROMPT }}
           model: ${{ github.event.inputs.model_name }}
           effort: "high"
