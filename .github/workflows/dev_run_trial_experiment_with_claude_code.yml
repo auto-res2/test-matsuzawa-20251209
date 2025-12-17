@@ -204,7 +204,13 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic_api_key: ${{ secrets.OPENROUTER_API_KEY }}
+          settings: |
+            {
+              "env": {
+                "ANTHROPIC_BASE_URL": "https://openrouter.ai/api/v1/responses"
+              }
+            }
           prompt: ${{ env.PROMPT }}
           claude_args: "--max-turns=100 --allowed-tools Bash,Write,Edit,MultiEdit,TodoWrite"
 
