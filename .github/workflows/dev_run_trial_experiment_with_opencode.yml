@@ -217,7 +217,7 @@ jobs:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
         run: |
           for i in {1..10}; do
-            opencode run --provider openrouter --model "${{ github.event.inputs.model_name }}" "$PROMPT" && break
+            opencode run --model "${{ github.event.inputs.model_name }}" "$PROMPT" && break
             if [ $i -lt 10 ]; then
               echo "Attempt $i failed with exit code $?. Retrying in $((2**i)) seconds..."
               sleep $((2**i))
