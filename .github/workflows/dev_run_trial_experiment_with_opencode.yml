@@ -13,7 +13,7 @@ on:
       model_name:
         description: "Model to use"
         required: true
-        default: 'openai/gpt-5.1-codex'
+        default: 'openrouter/gpt-5.1-codex'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
