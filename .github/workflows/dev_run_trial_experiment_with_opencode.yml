@@ -30,6 +30,16 @@ defaults:
 
 env:
   RESULTS_DIR: ".research/results"
+  OTEL_SERVICE_NAME: "opencode-gha"
+  OTEL_TRACES_EXPORTER: "otlp"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "https://cloud.langfuse.com/api/public/otel"
+  OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+
+  OTEL_RESOURCE_ATTRIBUTES: >-
+    github.repository=${{ github.repository }},
+    github.workflow=${{ github.workflow }},
+    github.run_id=${{ github.run_id }},
+    run_id=${{ github.event.inputs.run_ids }}
 
 # Why jobs are split into `run-experiment` and `fix-and-rerun`:
 # 1. Runner Stability: The AI agent (fix-and-rerun) is kept on a CPU runner to prevent
@@ -215,7 +225,11 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          LANGFUSE_AUTH: ${{ secrets.LANGFUSE_PUBLIC_KEY }}:${{ secrets.LANGFUSE_SECRET_KEY }}
         run: |
+          AUTH_BASE64=$(echo -n "$LANGFUSE_AUTH" | base64 -w 0)
+          export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic ${AUTH_BASE64}"
+
           for i in {1..10}; do
             opencode run --model "${{ github.event.inputs.model_name }}" "$PROMPT" && break
             if [ $i -lt 10 ]; then
@@ -237,7 +251,8 @@ jobs:
           if ! git diff --staged --quiet; then
             git commit -m "[CI] Automated fix for run_id=${{ needs.setup.outputs.current_run_id }}"
             for i in {1..5}; do
-              git pull --rebase && git push && break
+              git pull --rebase -X theirs origin main
+              git push && break
               echo "Push failed on attempt $i. Retrying in $((2**i)) seconds..."
               sleep $((2**i))
             done
