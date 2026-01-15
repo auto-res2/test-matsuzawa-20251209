@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --with langfuse python3 .github/scripts/claude_langfuse_hook.py"
+          }
+        ]
+      }
+    ]
+  }
+}
