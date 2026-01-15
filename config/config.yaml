@@ -6,6 +6,8 @@ wandb:
 run:
   run_id: default-run
 
+results_dir: .research/results
+
 # Default dataset/model/training placeholders
 model:
   name: CLIP
