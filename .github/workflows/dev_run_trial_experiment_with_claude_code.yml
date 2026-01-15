@@ -141,11 +141,12 @@ jobs:
     timeout-minutes: 60
 
     env:
-      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "https://us.cloud.langfuse.com/api/public/otel/v1/traces"
-      OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
-      OTEL_SERVICE_NAME: "claude-code-fix-agent"
-      OTEL_RESOURCE_ATTRIBUTES: "langfuse.trace.name=[ClaudeCodeFix]_${{ needs.setup.outputs.current_run_id }},langfuse.user.id=${{ github.actor }},langfuse.session.id=${{ github.run_id }}"
-
+      TRACE_TO_LANGFUSE: "true"
+      LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+      LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+      LANGFUSE_HOST: ${{ secrets.LANGFUSE_BASE_URL }}
+      RUN_ID: ${{ needs.setup.outputs.current_run_id }}
+      MODEL_NAME: ${{ github.event.inputs.model_name }} 
       SEARCH_HF_COMMAND: |
         curl -s -G \
           -H "Authorization: Bearer $HF_TOKEN" \
@@ -181,12 +182,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prepare Langfuse Auth
-        id: langfuse-auth
-        run: |
-          AUTH_STR=$(echo -n "${{ secrets.LANGFUSE_PUBLIC_KEY }}:${{ secrets.LANGFUSE_SECRET_KEY }}" | base64 -w 0)
-          echo "::add-mask::$AUTH_STR"
-          echo "auth_header=Basic $AUTH_STR" >> "$GITHUB_OUTPUT"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
 
       - name: Download experiment results
         uses: actions/download-artifact@v4
@@ -215,7 +212,8 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
-          OTEL_EXPORTER_OTLP_HEADERS: "Authorization=${{ steps.langfuse-auth.outputs.auth_header }}"
+          RUN_ID: ${{ env.RUN_ID }}
+          MODEL_NAME: ${{ env.MODEL_NAME }}
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: ${{ env.PROMPT }}
