@@ -217,6 +217,7 @@ jobs:
       - name: Install opencode
         run: |
           curl -fsSL https://opencode.ai/install | bash
+          npm install opencode-plugin-langfuse
 
       - name: Run OpenCode
         timeout-minutes: 10
