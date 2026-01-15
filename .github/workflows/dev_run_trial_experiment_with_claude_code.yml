@@ -196,6 +196,11 @@ jobs:
           
           cat "$RESULTS_DIR/error_summary.txt"
 
+      - name: Prepare Langfuse OTel Auth
+        run: |
+          AUTH_STR=$(echo -n "${{ secrets.LANGFUSE_PUBLIC_KEY }}:${{ secrets.LANGFUSE_SECRET_KEY }}" | base64 -w 0)
+          echo "LANGFUSE_OTEL_BASIC_AUTH=Basic $AUTH_STR" >> $GITHUB_ENV
+
       - name: Run Claude Code
         timeout-minutes: 10
         continue-on-error: true
@@ -203,14 +208,18 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
+          CLAUDE_CODE_ENABLE_TELEMETRY: "1"
+          OTEL_LOGS_EXPORTER: "otlp"
+          OTEL_METRICS_EXPORTER: "otlp"
+          OTEL_LOG_USER_PROMPTS: "1"
+          OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+          OTEL_EXPORTER_OTLP_ENDPOINT: "${{ secrets.LANGFUSE_BASE_URL }}/api/public/otel"
+          OTEL_EXPORTER_OTLP_HEADERS: "Authorization=${{ env.LANGFUSE_OTEL_BASIC_AUTH }}"
+          OTEL_RESOURCE_ATTRIBUTES: "session.id=gh-${{ github.run.id }},env=ci,run_id=${{ needs.setup.outputs.current_run_id }}"
+
         with:
-          anthropic_api_key: ${{ secrets.OPENROUTER_API_KEY }}
-          settings: |
-            {
-              "env": {
-                "ANTHROPIC_BASE_URL": "https://openrouter.ai/api/v1/responses"
-              }
-            }
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: ${{ env.PROMPT }}
           claude_args: "--max-turns=100 --allowed-tools Bash,Write,Edit,MultiEdit,TodoWrite"
 
@@ -224,7 +233,8 @@ jobs:
           if ! git diff --staged --quiet; then
             git commit -m "[CI] Automated fix for run_id=${{ needs.setup.outputs.current_run_id }}"
             for i in {1..5}; do
-              git pull --rebase && git push && break
+              git pull --rebase -X theirs origin main
+              git push && break
               echo "Push failed on attempt $i. Retrying in $((2**i)) seconds..."
               sleep $((2**i))
             done
