@@ -31,7 +31,20 @@ def main(cfg: DictConfig) -> None:
     print("=" * 80)
 
     # Extract configuration parameters
-    run_id = cfg.get('run', {}).get('run_id', 'default-run') if 'run' in cfg else cfg.get('run_id', 'default-run')
+    # Handle different ways 'run' might be configured
+    if 'run' in cfg:
+        run_value = cfg.get('run')
+        # If 'run' is a string (from override), use it directly as run_id
+        if isinstance(run_value, str):
+            run_id = run_value
+        # If 'run' is a dict, extract run_id from it
+        elif isinstance(run_value, dict) or hasattr(run_value, 'get'):
+            run_id = run_value.get('run_id', 'default-run')
+        else:
+            run_id = 'default-run'
+    else:
+        # Fall back to top-level run_id
+        run_id = cfg.get('run_id', 'default-run')
     mode = cfg.get('mode', 'trial')
     results_dir = cfg.get('results_dir', '.research/results')
 
