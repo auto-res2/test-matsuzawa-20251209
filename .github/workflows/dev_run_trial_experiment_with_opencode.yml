@@ -226,11 +226,10 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
-          LANGFUSE_AUTH: ${{ secrets.LANGFUSE_PUBLIC_KEY }}:${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_BASEURL: ${{ secrets.LANGFUSE_BASEURL }}
         run: |
-          AUTH_BASE64=$(echo -n "$LANGFUSE_AUTH" | base64 -w 0)
-          export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic ${AUTH_BASE64}"
-
           for i in {1..10}; do
             opencode run --model "${{ github.event.inputs.model_name }}" "$PROMPT" && break
             if [ $i -lt 10 ]; then
