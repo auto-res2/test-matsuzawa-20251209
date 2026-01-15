@@ -30,16 +30,6 @@ defaults:
 
 env:
   RESULTS_DIR: ".research/results"
-  OTEL_SERVICE_NAME: "opencode-gha"
-  OTEL_TRACES_EXPORTER: "otlp"
-  OTEL_EXPORTER_OTLP_ENDPOINT: "https://cloud.langfuse.com/api/public/otel"
-  OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
-
-  OTEL_RESOURCE_ATTRIBUTES: >-
-    github.repository=${{ github.repository }},
-    github.workflow=${{ github.workflow }},
-    github.run_id=${{ github.run_id }},
-    run_id=${{ github.event.inputs.run_ids }}
 
 # Why jobs are split into `run-experiment` and `fix-and-rerun`:
 # 1. Runner Stability: The AI agent (fix-and-rerun) is kept on a CPU runner to prevent
