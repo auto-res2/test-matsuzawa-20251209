@@ -218,7 +218,7 @@ jobs:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
           LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
-          LANGFUSE_HOST: ${{ secrets.LANGFUSE_BASE_URL }}
+          LANGFUSE_BASEURL: ${{ secrets.LANGFUSE_BASE_URL }}
           LANGFUSE_TRACE_ID: "trace-${{ needs.setup.outputs.current_run_id }}-${{ github.run_id }}"
         run: |
           for i in {1..10}; do
