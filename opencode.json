@@ -1,7 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "permission": "allow",
-  "experimental": {
-    "openTelemetry": true
-  }
+  "experimental_opentelemetry": true
 }
