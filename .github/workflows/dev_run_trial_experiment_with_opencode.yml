@@ -219,7 +219,7 @@ jobs:
           LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
           LANGFUSE_BASEURL: ${{ secrets.LANGFUSE_BASE_URL }}
-          LANGFUSE_SESSION_ID: "gha-${{ github.run_id }}-${{ needs.setup.outputs.current_run_id }}"
+          LANGFUSE_TRACE_ID: "trace-${{ needs.setup.outputs.current_run_id }}-${{ github.run_id }}"
         run: |
           for i in {1..10}; do
             opencode run --model "${{ github.event.inputs.model_name }}" "$PROMPT" && break
