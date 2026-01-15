@@ -141,6 +141,11 @@ jobs:
     timeout-minutes: 60
 
     env:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "https://cloud.langfuse.com/api/public/otel"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+      OTEL_SERVICE_NAME: "claude-code-fix-agent"
+      OTEL_RESOURCE_ATTRIBUTES: "langfuse.trace.name=[ClaudeCodeFix]_${{ needs.setup.outputs.current_run_id }},langfuse.user.id=${{ github.actor }},langfuse.session.id=${{ github.run_id }}"
+
       SEARCH_HF_COMMAND: |
         curl -s -G \
           -H "Authorization: Bearer $HF_TOKEN" \
@@ -176,6 +181,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Prepare Langfuse Auth
+        id: langfuse-auth
+        run: |
+          AUTH_STR=$(echo -n "${{ secrets.LANGFUSE_PUBLIC_KEY }}:${{ secrets.LANGFUSE_SECRET_KEY }}" | base64 -w 0)
+          echo "::add-mask::$AUTH_STR"
+          echo "auth_header=Basic $AUTH_STR" >> "$GITHUB_OUTPUT"
+
       - name: Download experiment results
         uses: actions/download-artifact@v4
         with:
@@ -196,11 +208,6 @@ jobs:
           
           cat "$RESULTS_DIR/error_summary.txt"
 
-      - name: Prepare Langfuse OTel Auth
-        run: |
-          AUTH_STR=$(echo -n "${{ secrets.LANGFUSE_PUBLIC_KEY }}:${{ secrets.LANGFUSE_SECRET_KEY }}" | base64 -w 0)
-          echo "LANGFUSE_OTEL_BASIC_AUTH=Basic $AUTH_STR" >> $GITHUB_ENV
-
       - name: Run Claude Code
         timeout-minutes: 10
         continue-on-error: true
@@ -208,16 +215,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
-
-          CLAUDE_CODE_ENABLE_TELEMETRY: "1"
-          OTEL_LOGS_EXPORTER: "otlp"
-          OTEL_METRICS_EXPORTER: "otlp"
-          OTEL_LOG_USER_PROMPTS: "1"
-          OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
-          OTEL_EXPORTER_OTLP_ENDPOINT: "${{ secrets.LANGFUSE_BASE_URL }}/api/public/otel"
-          OTEL_EXPORTER_OTLP_HEADERS: "Authorization=${{ env.LANGFUSE_OTEL_BASIC_AUTH }}"
-          OTEL_RESOURCE_ATTRIBUTES: "session.id=gh-${{ github.run.id }},env=ci,run_id=${{ needs.setup.outputs.current_run_id }}"
-
+          OTEL_EXPORTER_OTLP_HEADERS: "Authorization=${{ steps.langfuse-auth.outputs.auth_header }}"
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: ${{ env.PROMPT }}
