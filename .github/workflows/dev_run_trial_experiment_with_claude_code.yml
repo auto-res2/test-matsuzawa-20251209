@@ -219,7 +219,7 @@ jobs:
       - name: Sync to Langfuse
         if: always()
         run: |
-          uv run --with langfuse python3 .github/scripts/sync_to_langfuse.py
+          uv run --no-project --with "langfuse>=2.5.0" python3 .github/scripts/sync_to_langfuse.py
 
       - name: Commit and push fix
         run: |
