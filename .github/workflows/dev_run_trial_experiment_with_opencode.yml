@@ -218,7 +218,7 @@ jobs:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
           LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
-          LANGFUSE_BASEURL: ${{ secrets.LANGFUSE_BASEURL }}
+          LANGFUSE_BASEURL: ${{ secrets.LANGFUSE_BASE_URL }}
         run: |
           for i in {1..10}; do
             opencode run --model "${{ github.event.inputs.model_name }}" "$PROMPT" && break
