@@ -8,6 +8,8 @@ run:
 
 results_dir: .research/results
 
+mode: trial
+
 # Default dataset/model/training placeholders
 model:
   name: CLIP
